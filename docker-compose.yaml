@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+ music_lib_db:
+  container_name: music_lib_db
+  image: postgres:15.6-bookworm
+  restart: always
+  ports:
+   - "5432:5432"
+  environment:
+   - POSTGRES_PASSWORD=effmob
+   - POSTGRES_USER=effmob
+   - POSTGRES_DB=music_lib_db

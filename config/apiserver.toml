@@ -1,0 +1,9 @@
+addr = ":8080"
+log_level = "debug"
+
+[storage]
+host = "localhost"
+port = "5432"
+dbname = "music_lib_db"
+username = "effmob"
+password = "effmob"

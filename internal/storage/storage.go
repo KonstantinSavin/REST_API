@@ -8,8 +8,9 @@ import (
 )
 
 type Storage struct {
-	config *Config
-	db     *sql.DB
+	config  *Config
+	db      *sql.DB
+	songRep *SongRep
 }
 
 func New(cfg *Config) *Storage {
@@ -18,11 +19,13 @@ func New(cfg *Config) *Storage {
 	}
 }
 
-// "host=localhost dbname=music_lib sslmode=disable"
+func (st *Storage) Open() error {
+	dsn := st.config.DBURL
+	if dsn == "" {
+		dsn = fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable",
+			st.config.Username, st.config.Password, st.config.Host, st.config.Port, st.config.Database)
+	}
 
-func (s *Storage) Open() error {
-	dsn := fmt.Sprintf("user=%s password=%s host=%s port=%s "+
-		"dbname=%s sslmode=disable", s.config.Username, s.config.Password, s.config.Host, s.config.Port, s.config.Database)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return err
@@ -32,11 +35,23 @@ func (s *Storage) Open() error {
 		return err
 	}
 
-	s.db = db
+	st.db = db
 
 	return nil
 }
 
-func (s *Storage) Close() {
-	s.db.Close()
+func (st *Storage) Close() {
+	st.db.Close()
+}
+
+func (st *Storage) Song() *SongRep {
+	if st.songRep != nil {
+		return st.songRep
+	}
+
+	st.songRep = &SongRep{
+		storage: st,
+	}
+
+	return st.songRep
 }

@@ -1,17 +1,14 @@
 package apiserver
 
-import "effective-mobile/music-lib/internal/storage"
-
 type Config struct {
-	Addr     string `toml:"addr"`
-	LogLevel string `toml:"log_level"`
-	Storage  *storage.Config
+	Addr        string `toml:"addr"`
+	LogLevel    string `toml:"log_level"`
+	DatabaseURL string `toml:"db_url"`
 }
 
 func NewCfg() *Config {
 	return &Config{
 		Addr:     ":8080",
 		LogLevel: "debug",
-		Storage:  storage.NewCfg(),
 	}
 }

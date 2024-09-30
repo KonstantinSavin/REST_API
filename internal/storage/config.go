@@ -6,7 +6,7 @@ type Config struct {
 	Database string `toml:"dbname"`
 	Username string `toml:"username"`
 	Password string `toml:"password"`
-	DBURL    string `toml:"dburl`
+	DBURL    string `toml:"db_url"`
 }
 
 func NewCfg() *Config {

@@ -24,43 +24,47 @@ func New(config *Config) *APIServer {
 	}
 }
 
-func (s *APIServer) Start() error {
-	if err := s.configureLogger(); err != nil {
+func (server *APIServer) Start() error {
+	server.logger.Info("запуск сервера")
+
+	if err := server.configureLogger(); err != nil {
 		return err
 	}
 
-	s.configureRouter()
+	server.configureRouter()
 
-	if err := s.configureStorage(); err != nil {
+	if err := server.configureStorage(); err != nil {
 		return err
 	}
 
-	s.logger.Info("api server начал работу")
+	server.logger.Info("api server начал работу")
 
-	return http.ListenAndServe(s.cfg.Addr, s.router)
+	return http.ListenAndServe(server.cfg.Addr, server.router)
 }
 
-func (s *APIServer) configureLogger() error {
-	level, err := logrus.ParseLevel(s.cfg.LogLevel)
+func (server *APIServer) configureLogger() error {
+	level, err := logrus.ParseLevel(server.cfg.LogLevel)
 	if err != nil {
 		return err
 	}
-	s.logger.SetLevel(level)
+	server.logger.SetLevel(level)
+	server.logger.Infof("уровень логирования %s", level)
 
 	return nil
 }
 
-func (s *APIServer) configureRouter() {
-	s.router.HandleFunc("/hello", s.handleHello())
+func (server *APIServer) configureRouter() {
+	server.router.HandleFunc("/hello", server.handleHello())
 }
 
-func (s *APIServer) configureStorage() error {
-	st := storage.New(s.cfg.Storage)
+func (server *APIServer) configureStorage() error {
+	st := storage.New(server.cfg.Storage)
 	if err := st.Open(); err != nil {
 		return err
 	}
 
-	s.storage = st
+	server.storage = st
+	server.logger.Info("база данных подключена")
 
 	return nil
 }

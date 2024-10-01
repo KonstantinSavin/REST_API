@@ -8,7 +8,8 @@ type Config struct {
 
 func NewCfg() *Config {
 	return &Config{
-		Addr:     ":8080",
-		LogLevel: "debug",
+		Addr:        ":8080",
+		LogLevel:    "debug",
+		DatabaseURL: "user=effmob password=effmob host=localhost port=5432 dbname=music_lib_db sslmode=disable",
 	}
 }

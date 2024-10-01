@@ -1,7 +1,7 @@
 package model
 
 type Song struct {
-	ID    string
-	Name  string
-	Group string
+	ID    string `json:"id"`
+	Name  string `json:"song"`
+	Group string `json:"group"`
 }

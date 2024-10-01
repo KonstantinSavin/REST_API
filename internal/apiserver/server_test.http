@@ -1,0 +1,11 @@
+POST http://localhost:8080/add
+Content-Type: application/json
+
+{
+ "group": "Muse",
+ "song": "Supermassive Black Hole"
+}
+
+
+###
+DELETE http://localhost:8080/delete/d1dcaee4-e452-4039-a37a-51b1e44469a8

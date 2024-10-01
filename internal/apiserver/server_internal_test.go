@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +23,7 @@ func TestServer(t *testing.T) {
 
 	defer db.Close()
 	storage := sqldb.New(db)
-	srv := newServer(storage)
+	srv := newServer(logrus.New(), storage)
 	srv.ServeHTTP(rec, req)
 	assert.Equal(t, rec.Code, http.StatusOK)
 }

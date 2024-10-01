@@ -19,7 +19,7 @@ func Start(cfg *Config, logger *logrus.Logger) error {
 
 	defer db.Close()
 	storage := sqldb.New(db)
-	srv := newServer(storage)
+	srv := newServer(logger, storage)
 
 	logger.Debugf("подключаем сервер по адресу %s", cfg.Addr)
 	return http.ListenAndServe(cfg.Addr, srv)

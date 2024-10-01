@@ -5,6 +5,7 @@ import (
 	"effective-mobile/music-lib/internal/storage"
 
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 )
 
 type Storage struct {
@@ -25,6 +26,7 @@ func (st *Storage) Song() storage.SongRep {
 
 	st.songRep = &SongRep{
 		storage: st,
+		logger:  logrus.New(),
 	}
 
 	return st.songRep

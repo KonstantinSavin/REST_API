@@ -21,7 +21,7 @@ func Start(cfg *Config, logger *logrus.Logger) error {
 	storage := sqldb.New(db)
 	srv := newServer(storage)
 
-	logger.Debugf("подключаем сервер по адресу %s с хендлером %v", cfg.Addr, srv)
+	logger.Debugf("подключаем сервер по адресу %s", cfg.Addr)
 	return http.ListenAndServe(cfg.Addr, srv)
 }
 

@@ -1,3 +1,4 @@
+# Add song
 POST http://localhost:8080/add
 Content-Type: application/json
 
@@ -7,5 +8,14 @@ Content-Type: application/json
 }
 
 
-###
+### Delete Song
 DELETE http://localhost:8080/delete/d1dcaee4-e452-4039-a37a-51b1e44469a8
+
+### Update song
+PATCH http://localhost:8080/update/10f46aa8-9fbd-4214-943d-020ba6fa1057
+Content-Type: application/json
+
+{
+ "group": "Muse",
+ "song": "Supermassive Black Hole"
+}

@@ -22,6 +22,7 @@ func Start(cfg *Config, logger *logrus.Logger) error {
 	srv := newServer(logger, storage)
 
 	logger.Debugf("подключаем сервер по адресу %s", cfg.Addr)
+	logger.Info("приложение запущено")
 	return http.ListenAndServe(cfg.Addr, srv)
 }
 

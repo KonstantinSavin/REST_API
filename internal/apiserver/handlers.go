@@ -9,6 +9,8 @@ import (
 )
 
 func (srv *server) handlerAddSong(c *gin.Context) {
+	srv.logger.Info(c.Request.Body)
+
 	song := model.Song{}
 	if err := c.ShouldBindJSON(&song); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

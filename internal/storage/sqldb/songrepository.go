@@ -2,7 +2,7 @@ package sqldb
 
 import (
 	"effective-mobile/music-lib/internal/model"
-	"effective-mobile/music-lib/internal/storage/service"
+	"effective-mobile/music-lib/internal/storage"
 	"fmt"
 
 	"github.com/sirupsen/logrus"
@@ -65,16 +65,15 @@ func (r *SongRep) UpdateSong(id string, s *model.Song) (*model.Song, error) {
 	return song, nil
 }
 
-// TODO
-func (r *SongRep) GetSongs(f *service.Filter) ([]*model.Song, bool, error) {
+func (r *SongRep) GetSongs(f *storage.Filter) ([]*model.Song, bool, error) {
 	var hasNextPage bool = false
 
-	songs, err := f.FilterSongs()
+	songs, err := r.FilterSongs(*f)
 	if err != nil {
 		return nil, false, err
 	}
 
-	if len(songs) > f.Pages {
+	if len(songs) > *f.PerPage {
 		songs = songs[:len(songs)-1]
 		hasNextPage = true
 	}

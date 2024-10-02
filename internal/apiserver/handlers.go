@@ -2,7 +2,7 @@ package apiserver
 
 import (
 	"effective-mobile/music-lib/internal/model"
-	"effective-mobile/music-lib/internal/storage/service"
+	"effective-mobile/music-lib/internal/storage"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -57,7 +57,7 @@ func (srv *server) handlerUpdateSong(c *gin.Context) {
 }
 
 func (srv *server) handlerGetSongs(c *gin.Context) {
-	input := service.Filter{}
+	input := storage.Filter{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -70,12 +70,13 @@ func (srv *server) handlerGetSongs(c *gin.Context) {
 		return
 	}
 
-	c.Writer.Header().Set("Pagination-Limit", strconv.Itoa(filter.Pages))
+	c.Writer.Header().Set("Pagination-Page", strconv.Itoa(*filter.Page))
+	c.Writer.Header().Set("Pagination-Limit", strconv.Itoa(*filter.PerPage))
 
 	c.Writer.Header().Set("Has-Next-Page", strconv.FormatBool(hasNextPagge))
 
 	c.JSON(
 		http.StatusOK,
-		service.FilteredSongs{Songs: songs},
+		storage.FilteredSongs{Songs: songs},
 	)
 }

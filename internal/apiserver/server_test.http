@@ -21,9 +21,11 @@ Content-Type: application/json
 }
 
 ### Get songs by filter
-GET http://localhost:8080/songs
+POST http://localhost:8080/songs
 Content-Type: application/json
 
 {
+    "page": 2,
+    "per_page": 8,
     "group": "Muse"
 }

@@ -4,7 +4,7 @@ import "effective-mobile/music-lib/internal/model"
 
 type Filter struct {
 	Page    *int    `json:"page"`
-	PerPage *int    `json:"per_pages"`
+	PerPage *int    `json:"per_page"`
 	ID      *string `json:"id"`
 	Name    *string `json:"song"`
 	Group   *string `json:"group"`

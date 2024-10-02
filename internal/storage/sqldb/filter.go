@@ -50,7 +50,7 @@ func (r SongRep) queryWithFilter(f storage.Filter) (*sql.Rows, error) {
 	var filterValues []interface{}
 
 	if f.Name != nil {
-		filterValues = append(filterValues, "%"+*f.Name+"%")
+		filterValues = append(filterValues, *f.Name)
 		if query != ` WHERE` {
 			query += ` AND`
 		}
@@ -59,7 +59,7 @@ func (r SongRep) queryWithFilter(f storage.Filter) (*sql.Rows, error) {
 	}
 
 	if f.Group != nil {
-		filterValues = append(filterValues, "%"+*f.Group+"%")
+		filterValues = append(filterValues, *f.Group)
 		if query != ` WHERE` {
 			query += ` AND`
 		}
@@ -85,5 +85,5 @@ func (r SongRep) queryWithFilter(f storage.Filter) (*sql.Rows, error) {
 	sql := prefix + query
 	fmt.Println(sql)
 	fmt.Println(filterValues...)
-	return r.storage.songRep.storage.db.Query(sql, filterValues...)
+	return r.storage.db.Query(sql, filterValues...)
 }

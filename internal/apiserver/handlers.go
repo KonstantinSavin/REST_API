@@ -62,8 +62,10 @@ func (srv *server) handlerGetSongs(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Println(input.Page, input.PerPage)
 
 	filter := input.Update()
+	fmt.Println(filter.Page, filter.PerPage)
 	songs, hasNextPagge, err := srv.storage.Song().GetSongs(&filter)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})

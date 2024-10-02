@@ -34,4 +34,5 @@ func (srv *server) configureRouter() {
 	srv.router.POST("/add", srv.handlerAddSong)
 	srv.router.DELETE("/delete/:id", srv.handlerDeleteSong)
 	srv.router.PATCH("/update/:id", srv.handlerUpdateSong)
+	srv.router.GET("/songs", srv.handlerGetSongs)
 }

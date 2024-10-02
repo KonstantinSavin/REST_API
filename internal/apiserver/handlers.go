@@ -2,15 +2,15 @@ package apiserver
 
 import (
 	"effective-mobile/music-lib/internal/model"
+	"effective-mobile/music-lib/internal/storage/service"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (srv *server) handlerAddSong(c *gin.Context) {
-	srv.logger.Info(c.Request.Body)
-
 	song := model.Song{}
 	if err := c.ShouldBindJSON(&song); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -54,4 +54,28 @@ func (srv *server) handlerUpdateSong(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"result": fmt.Sprintf("song with id = %s has been updated", songID), "song": song})
+}
+
+func (srv *server) handlerGetSongs(c *gin.Context) {
+	input := service.Filter{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	filter := input.Update()
+	songs, hasNextPagge, err := srv.storage.Song().GetSongs(&filter)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Writer.Header().Set("Pagination-Limit", strconv.Itoa(filter.Pages))
+
+	c.Writer.Header().Set("Has-Next-Page", strconv.FormatBool(hasNextPagge))
+
+	c.JSON(
+		http.StatusOK,
+		service.FilteredSongs{Songs: songs},
+	)
 }

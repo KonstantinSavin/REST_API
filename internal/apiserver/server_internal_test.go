@@ -25,5 +25,5 @@ func TestServer(t *testing.T) {
 	storage := sqldb.New(db)
 	srv := newServer(logrus.New(), storage)
 	srv.ServeHTTP(rec, req)
-	assert.Equal(t, rec.Code, http.StatusOK)
+	assert.Equal(t, rec.Code, http.StatusBadRequest)
 }

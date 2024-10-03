@@ -2,6 +2,8 @@ services:
   app:
     container_name: app_effmob
     build: ../..
+    ports:
+      - 8080:8080
     environment:
       RUN_ADDR: 0.0.0.0:8080
       LOG_LEVEL: DEBUG

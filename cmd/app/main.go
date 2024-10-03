@@ -1,34 +1,28 @@
 package main
 
 import (
+	// "effective-mobile/music-lib/internal/apiserver"
 	"effective-mobile/music-lib/internal/apiserver"
+	"effective-mobile/music-lib/internal/config"
 	"effective-mobile/music-lib/pkg/logging"
-	"flag"
 
-	"github.com/BurntSushi/toml"
+	"github.com/joho/godotenv"
 )
-
-var (
-	configPath string
-)
-
-func init() {
-	flag.StringVar(&configPath, "config-path", "config/apiserver.toml", "path to config file")
-}
 
 func main() {
 	logger := logging.GetLogger()
 	logger.Info("запуск приложения")
 
 	logger.Debug("парсим конфиг")
-	flag.Parse()
-
-	cfg := apiserver.NewCfg()
-	_, err := toml.DecodeFile(configPath, cfg)
-	if err != nil {
-		logger.Fatal(err)
+	if err := godotenv.Load(); err != nil {
+		logger.Info("файл .env не найден")
 	}
-	logger.Info("конфиг получен")
+
+	cfg := config.GetConfig()
+	logger.Infof(`конфиг получен:
+	port: %s
+	loglevel: %s
+	DB url: %s`, cfg.Port, cfg.LogLevel, cfg.DBURL)
 
 	logger.Debug("запускаем сервер")
 	if err := apiserver.Start(cfg, logger); err != nil {

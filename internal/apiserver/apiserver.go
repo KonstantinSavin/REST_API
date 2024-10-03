@@ -2,15 +2,16 @@ package apiserver
 
 import (
 	"database/sql"
+	"effective-mobile/music-lib/internal/config"
 	"effective-mobile/music-lib/internal/storage/sqldb"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
 )
 
-func Start(cfg *Config, logger *logrus.Logger) error {
-	logger.Debugf("подключаем базу данных по адресу: %s", cfg.DatabaseURL)
-	db, err := newDB(cfg.DatabaseURL)
+func Start(cfg *config.Config, logger *logrus.Logger) error {
+	logger.Debugf("подключаем базу данных по адресу: %s", cfg.DBURL)
+	db, err := newDB(cfg.DBURL)
 	if err != nil {
 		logger.Error(err)
 		return err
@@ -21,9 +22,9 @@ func Start(cfg *Config, logger *logrus.Logger) error {
 	storage := sqldb.New(db)
 	srv := newServer(logger, storage)
 
-	logger.Debugf("подключаем сервер по адресу %s", cfg.Addr)
+	logger.Debugf("подключаем сервер по адресу %s", cfg.Port)
 	logger.Info("приложение запущено")
-	return http.ListenAndServe(cfg.Addr, srv)
+	return http.ListenAndServe(cfg.Port, srv)
 }
 
 func newDB(dbURL string) (*sql.DB, error) {

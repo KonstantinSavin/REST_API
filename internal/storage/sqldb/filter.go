@@ -75,7 +75,7 @@ func (r SongRep) queryWithFilter(f storage.Filter) (*sql.Rows, error) {
 
 	limit := *f.PerPage + 1
 	filterValues = append(filterValues, limit)
-	query += ` LIMIT $` + strconv.Itoa(len(filterValues)) // TODO
+	query += ` LIMIT $` + strconv.Itoa(len(filterValues))
 
 	offset := (*f.Page - 1) * *f.PerPage
 
@@ -83,7 +83,8 @@ func (r SongRep) queryWithFilter(f storage.Filter) (*sql.Rows, error) {
 	query += ` OFFSET $` + strconv.Itoa(len(filterValues))
 
 	sql := prefix + query
-	fmt.Println(sql)
-	fmt.Println(filterValues...)
+
+	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", sql))
+
 	return r.storage.db.Query(sql, filterValues...)
 }

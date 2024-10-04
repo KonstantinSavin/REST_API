@@ -80,16 +80,3 @@ func (r *SongRep) GetSongs(f *storage.Filter) ([]*model.Song, bool, error) {
 
 	return songs, hasNextPage, nil
 }
-
-// TODO
-func (r *SongRep) GetText(id string) (string, error) {
-	s := ""
-	if err := r.storage.db.QueryRow(
-		"SELECT id, song_name, group_name FROM songs WHERE id = $1",
-		id,
-	).Scan(); err != nil {
-		return s, err
-	}
-
-	return s, nil
-}

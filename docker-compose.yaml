@@ -1,27 +1,24 @@
 services:
   app:
     container_name: app_effmob
-    build: ../..
+    build: ./
     ports:
-      - 8080:8080
-    environment:
-      RUN_ADDR: 0.0.0.0:8080
-      LOG_LEVEL: DEBUG
-      DATABASE_DSN: postgres://effmob:effmob@localhost:5432/music_lib_db
+     - "8081:8080"
+    env_file:
+      - .env
     restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
     links:
      - postgres
 
   postgres:
-    container_name: music_lib_db
+    container_name: ml_db
     image: postgres:15.6-bookworm
     restart: always
     ports:
-     - "5432:5432"
+     - "15432:5432"
     environment:
-     - POSTGRES_PASSWORD=effmob
-     - POSTGRES_USER=effmob
-     - POSTGRES_DB=music_lib_db
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - .env

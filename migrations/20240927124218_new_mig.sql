@@ -12,4 +12,4 @@ CREATE TABLE IF NOT EXISTS songs (
 -- +goose StatementBegin
 DROP TABLE IF EXISTS songs;
 -- +goose StatementEnd
--- goose -dir migrations postgres "postgres://effmob:effmob@localhost/music_lib_db?sslmode=disable" up
+-- goose -dir migrations postgres "postgres://effmob:effmob@localhost/ml_db?sslmode=disable" up

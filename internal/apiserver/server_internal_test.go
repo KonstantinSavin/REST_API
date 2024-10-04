@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const dbURL = "user=effmob password=effmob host=localhost port=5432 dbname=music_lib_db sslmode=disable"
+const dbURL = "user=effmob password=effmob host=localhost port=5432 dbname=ml_db sslmode=disable"
 
 func TestServer(t *testing.T) {
 	rec := httptest.NewRecorder()

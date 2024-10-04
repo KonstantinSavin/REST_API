@@ -19,8 +19,8 @@ func main() {
 	}
 
 	cfg := config.GetConfig()
-	logger.Infof("конфиг получен: port: %s, loglevel: %s, DB_url: %s",
-		cfg.Port, cfg.LogLevel, cfg.DBURL)
+	logger.Infof("конфиг получен: port: %s, DB_url: %s",
+		cfg.Port, cfg.DBURL)
 
 	logger.Debug("запускаем сервер")
 	if err := apiserver.Start(cfg, logger); err != nil {

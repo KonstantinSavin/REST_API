@@ -1,5 +1,5 @@
 # Add song
-POST http://localhost:8081/add
+POST http://localhost:8000/add
 Content-Type: application/json
 
 {
@@ -9,10 +9,10 @@ Content-Type: application/json
 
 
 ### Delete Song
-DELETE http://localhost:8080/delete/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6
+DELETE http://localhost:8000/delete/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6
 
 ### Update song
-PATCH http://localhost:8080/update/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6
+PATCH http://localhost:8000/update/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### Get songs by filter
-POST http://localhost:8080/songs
+POST http://localhost:8000/songs
 Content-Type: application/json
 
 {

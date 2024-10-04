@@ -18,6 +18,11 @@ func Start(cfg *config.Config, logger *logrus.Logger) error {
 	}
 	logger.Info("база данных подключена")
 
+	if err := sqldb.MigrationsUp(db); err != nil {
+		return err
+	}
+	logger.Info("db мигрировало")
+
 	defer db.Close()
 	storage := sqldb.New(db)
 	srv := newServer(logger, storage)

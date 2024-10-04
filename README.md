@@ -89,24 +89,10 @@ Content-Type: application/json
 
 # Установка <a name="management"/>
 
-Makefile:  
-build:
-		go build -v ./cmd/app
-
-test:
-		go test -v -timeout 30s ./...
-
-up:
-	docker-compose up --force-recreate
-
-down:
-	docker-compose down
-	docker image rm music-lib-app
-
-.DEFAULT_GOAL := build
-
 Из корневой дирректории запускаем команду make для сборки контейнера с приложением,
 затем команду make up для старта сервиса(при этом создается структура БД с помощью миграции).
+
+[Makefile](Makefile) 
   
 # Тестирование <a name="test"/>
 

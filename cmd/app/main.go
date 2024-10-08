@@ -1,13 +1,22 @@
 package main
 
 import (
-	// "effective-mobile/music-lib/internal/apiserver"
+	_ "effective-mobile/music-lib/docs"
 	"effective-mobile/music-lib/internal/apiserver"
 	"effective-mobile/music-lib/internal/config"
 	"effective-mobile/music-lib/pkg/logging"
 
 	"github.com/joho/godotenv"
 )
+
+// Swagger
+//
+// @title        Music library
+// @version      1.0
+// @description  API server for music library
+// @host         localhost:8000
+// @BasePath     /
+// @schemes      http https
 
 func main() {
 	logger := logging.GetLogger()

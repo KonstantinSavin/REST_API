@@ -1,0 +1,133 @@
+basePath: /
+definitions:
+  model.Song:
+    properties:
+      group:
+        type: string
+      id:
+        type: string
+      song:
+        type: string
+    type: object
+  storage.Filter:
+    properties:
+      group:
+        type: string
+      id:
+        type: string
+      page:
+        type: integer
+      per_page:
+        type: integer
+      song:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: API server for music library
+  title: Music library
+  version: "1.0"
+paths:
+  /add:
+    post:
+      consumes:
+      - appcication/json
+      description: add new song to library
+      operationId: add-song
+      parameters:
+      - description: add song
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Song'
+      produces:
+      - appcication/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Song'
+      summary: AddSong
+      tags:
+      - songs
+  /delete/{id}:
+    delete:
+      consumes:
+      - appcication/json
+      description: delete song from library
+      operationId: delete-song
+      parameters:
+      - description: song id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - appcication/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/model.Song'
+      summary: DeleteSong
+      tags:
+      - songs
+  /songs:
+    post:
+      consumes:
+      - appcication/json
+      description: get songs with filtration and pagination
+      operationId: get-songs
+      parameters:
+      - description: filter
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/storage.Filter'
+      produces:
+      - appcication/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/storage.Filter'
+            type: array
+      summary: GetSongs
+      tags:
+      - songs
+  /update/{id}:
+    patch:
+      consumes:
+      - appcication/json
+      description: update song from library
+      operationId: update-song
+      parameters:
+      - description: song id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: delete song
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Song'
+      produces:
+      - appcication/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Song'
+      summary: UpdateSong
+      tags:
+      - songs
+schemes:
+- http
+- https
+swagger: "2.0"

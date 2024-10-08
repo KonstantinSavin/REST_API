@@ -4,8 +4,12 @@ import (
 	"effective-mobile/music-lib/internal/storage"
 	"net/http"
 
+	_ "effective-mobile/music-lib/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type server struct {
@@ -20,6 +24,8 @@ func newServer(logger *logrus.Logger, storage storage.Storage) *server {
 		logger:  logger,
 		storage: storage,
 	}
+
+	srv.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	srv.configureRouter()
 

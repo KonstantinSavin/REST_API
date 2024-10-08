@@ -1,10 +1,11 @@
-# effective-mobile-task
+# REST API
 - [Условие задачи](#task)
 - [Использованные библиотеки](#libs)
 - [Конфигурация](#config)
 - [Функциональность](#func)
 - [Установка](#management)
 - [Тестирование](#test)
+- [Сваггер](#swagger)
 
 # Условие задачи <a name="task"/>
 
@@ -29,14 +30,16 @@ JSON
 3. Информацию положить в БД postgres (структура БД должна быть создана путем миграций при старте сервиса)
 4. Покрыть код debug- и info-логами
 5. Вынести конфигурационные данные в .env-файл
+6. Сгенерировать сваггер на реализованное АПИ
 
 
 # Использованные пакеты <a name="libs"/>
 
-- Логгирование: (https://github.com/sirupsen/logrus)
+- Логгирование: [sirupsen/logrus](https://github.com/sirupsen/logrus)
 - Миграции: [pressly/goose](https://github.com/pressly/goose)
 - Работа с HTTP: [gin-gonic/gin](https://github.com/gin-gonic/gin)
 - Тестирование: [stretchr/testify](https://github.com/stretchr/testify)
+- Сваггер: [swaggo/swag](https://github.com/swaggo/swag)
 
 # Конфигурация <a name="config"/>
 
@@ -94,3 +97,6 @@ Content-Type: application/json
 # Тестирование <a name="test"/>
 
 Для удобства в корневой каталог помещен файл server_test.http для тестирования сервиса (например с помощью расширения [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client))
+
+# Сваггер <a name="swagger"/>
+[Swagger](docs/swagger.json)

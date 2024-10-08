@@ -14,25 +14,21 @@
 
 1. Выставить rest методы
 - Получение данных библиотеки с фильтрацией по всем полям и пагинацией
-- Получение текста песни с пагинацией по куплетам
 - Удаление песни
 - Изменение данных песни
 - Добавление новой песни в формате
 
 JSON
 
-{
- "group": "Muse",
- "song": "Supermassive Black Hole"
-}
+{  
+ "group": "Muse",  
+ "song": "Supermassive Black Hole"  
+ }
 
 
-2. При добавлении сделать запрос в АПИ, описанного сваггером
-
-3. Обогащенную информацию положить в БД postgres (структура БД должна быть создана путем миграций при старте сервиса)
+3. Информацию положить в БД postgres (структура БД должна быть создана путем миграций при старте сервиса)
 4. Покрыть код debug- и info-логами
 5. Вынести конфигурационные данные в .env-файл
-6. Сгенерировать сваггер на реализованное АПИ
 
 
 # Использованные пакеты <a name="libs"/>
@@ -50,41 +46,42 @@ JSON
 
 - Получение данных библиотеки с фильтрацией по всем полям и пагинацией
 
-Пример запроса:
-POST http://localhost:8000/songs
+Пример запроса:  
+POST http://localhost:8000/songs  
 Content-Type: application/json
 
-{
-    "page": 1,
-    "per_page": 8,
-    "group": "Muse"
+{  
+    "page": 1,  
+    "per_page": 8,  
+    "group": "Muse"  
 }
 
 - Удаление песни
 
-Пример запроса:
+Пример запроса:  
 DELETE http://localhost:8000/delete/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6
 
 - Изменение данных песни
 
-Пример запроса:
-PATCH http://localhost:8000/update/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6
+Пример запроса:  
+PATCH http://localhost:8000/update/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6  
 Content-Type: application/json
 
-{
- "group": "Muse",
- "song": "Supermassive Black Hole"
+{  
+"group": "Muse",  
+"song": "Supermassive Black Hole"  
 }
 
 - Добавление новой песни в формате
 
-Пример запроса:
-POST http://localhost:8000/add
-Content-Type: application/json
+Пример запроса:  
+POST http://localhost:8000/add  
+Content-Type: application/json  
 
-{
- "group": "Muse",
- "song": "Supermassive Black Hole"
+  
+{  
+"group": "Muse",  
+"song": "Supermassive Black Hole"  
 }
 
 # Установка <a name="management"/>
@@ -96,4 +93,4 @@ Content-Type: application/json
   
 # Тестирование <a name="test"/>
 
-Для удобства в корневой каталог помещен файл server_test.http для тестирования сервиса
+Для удобства в корневой каталог помещен файл server_test.http для тестирования сервиса (например с помощью расширения [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client))

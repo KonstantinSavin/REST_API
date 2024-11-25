@@ -41,9 +41,9 @@ func TestSongRepository_DeleteSong(t *testing.T) {
 	}
 	err = st.Song().CreateSong(s)
 	assert.NoError(t, err)
-	assert.NotNil(t, s.ID)
+	assert.NotNil(t, s.SongID)
 
-	err = st.Song().DeleteSong(s.ID)
+	err = st.Song().DeleteSong(s.SongID)
 	assert.NoError(t, err)
 }
 
@@ -63,7 +63,7 @@ func TestSongRepository_UpdateSong(t *testing.T) {
 	assert.Equal(t, "Gimme!", s.Name)
 	assert.Equal(t, "ABBA", s.Group)
 
-	s, err = st.Song().UpdateSong(s.ID, &model.Song{
+	s, err = st.Song().UpdateSong(s.SongID, &model.Song{
 		Name:  "Can't Stop",
 		Group: "RHCP",
 	})

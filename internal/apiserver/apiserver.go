@@ -3,6 +3,7 @@ package apiserver
 import (
 	"database/sql"
 	"effective-mobile/music-lib/internal/config"
+	"effective-mobile/music-lib/internal/service"
 	"effective-mobile/music-lib/internal/storage/sqldb"
 	"net/http"
 
@@ -24,8 +25,11 @@ func Start(cfg *config.Config, logger *logrus.Logger) error {
 	logger.Info("db мигрировало")
 
 	defer db.Close()
-	storage := sqldb.New(db)
-	srv := newServer(logger, storage)
+	storage := sqldb.New(db, logger)
+
+	service := service.NewService(storage, cfg.APIURL, logger)
+
+	srv := newServer(logger, service)
 
 	logger.Debugf("подключаем сервер по адресу %s", cfg.Port)
 	logger.Info("приложение запущено")

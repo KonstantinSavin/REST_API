@@ -3,12 +3,11 @@ package sqldb
 import (
 	"database/sql"
 	"effective-mobile/music-lib/internal/model"
-	"effective-mobile/music-lib/internal/storage"
 	"fmt"
 	"strconv"
 )
 
-func (r SongRep) FilterSongs(f storage.Filter) ([]*model.Song, error) {
+func (r SongRep) FilterSongs(f model.Filter) ([]*model.Song, error) {
 	rows, err := r.queryWithFilter(f)
 	if err != nil {
 		return nil, err
@@ -19,7 +18,7 @@ func (r SongRep) FilterSongs(f storage.Filter) ([]*model.Song, error) {
 	for rows.Next() {
 		s := new(model.Song)
 		err := rows.Scan(
-			&s.ID,
+			&s.SongID,
 			&s.Name,
 			&s.Group,
 		)
@@ -40,7 +39,7 @@ func (r SongRep) FilterSongs(f storage.Filter) ([]*model.Song, error) {
 	return songs, err
 }
 
-func (r SongRep) queryWithFilter(f storage.Filter) (*sql.Rows, error) {
+func (r SongRep) queryWithFilter(f model.Filter) (*sql.Rows, error) {
 	prefix := `
 	SELECT id, song_name, group_name
 	FROM songs

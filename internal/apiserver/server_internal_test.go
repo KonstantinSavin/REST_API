@@ -1,7 +1,9 @@
 package apiserver
 
 import (
+	"effective-mobile/music-lib/internal/service"
 	"effective-mobile/music-lib/internal/storage/sqldb"
+	"effective-mobile/music-lib/pkg/logging"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -11,7 +13,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const dbURL = "user=effmob password=effmob host=localhost port=5432 dbname=ml_db sslmode=disable"
+const dbURL = "user=effmob password=effmob host=localhost port=15432 dbname=ml_db sslmode=disable"
+const apiurl = ""
 
 func TestServer(t *testing.T) {
 	rec := httptest.NewRecorder()
@@ -22,8 +25,9 @@ func TestServer(t *testing.T) {
 	}
 
 	defer db.Close()
-	storage := sqldb.New(db)
-	srv := newServer(logrus.New(), storage)
+	logger := logging.GetLogger()
+	storage := sqldb.New(db, logger)
+	srv := newServer(logrus.New(), service.NewService(storage, apiurl, logger))
 	srv.ServeHTTP(rec, req)
 	assert.Equal(t, rec.Code, http.StatusBadRequest)
 }

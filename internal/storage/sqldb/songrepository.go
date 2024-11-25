@@ -2,7 +2,6 @@ package sqldb
 
 import (
 	"effective-mobile/music-lib/internal/model"
-	"effective-mobile/music-lib/internal/storage"
 	"fmt"
 
 	"github.com/sirupsen/logrus"
@@ -13,23 +12,48 @@ type SongRep struct {
 	logger  *logrus.Logger
 }
 
-func (r *SongRep) CreateSong(s *model.Song) error {
-	q := `INSERT INTO songs (song_name,group_name) VALUES ($1, $2) RETURNING id`
+func (r *SongRep) CreateSong(s *model.EnrichedSong) (*model.EnrichedSong, error) {
+	r.logger.Debugf("SongRep CreateSong")
 
-	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", q))
+	qg := `WITH inserted AS (
+    	INSERT INTO group_names (group_name) VALUES ($1) 
+    	ON CONFLICT (group_name) DO NOTHING
+    	RETURNING id
+		)
+		SELECT id FROM inserted
+		UNION ALL
+		SELECT id FROM group_names WHERE group_name = $1 LIMIT 1;`
+
+	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", qg))
 
 	if err := r.storage.db.QueryRow(
-		q,
-		s.Name,
+		qg,
 		s.Group,
-	).Scan(&s.ID); err != nil {
+	).Scan(&s.GroupID); err != nil {
 		r.logger.Errorf("Ошибка SQL: %s", err)
-		return err
+		return s, err
 	}
-	return nil
+
+	qs := `INSERT INTO songs (song_name, group_id, release_date, text, link) VALUES ($1, $2, $3, $4, $5) RETURNING id`
+
+	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", qs))
+
+	if err := r.storage.db.QueryRow(
+		qs,
+		s.Name,
+		s.GroupID,
+		s.ReleaseDate,
+		s.Text,
+		s.Link,
+	).Scan(&s.SongID); err != nil {
+		r.logger.Errorf("Ошибка SQL: %s", err)
+		return s, err
+	}
+	return s, nil
 }
 
 func (r *SongRep) DeleteSong(id string) error {
+	r.logger.Debugf("SongRep DeleteSong")
 	q := `DELETE FROM songs WHERE id = $1`
 
 	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", q))
@@ -42,12 +66,14 @@ func (r *SongRep) DeleteSong(id string) error {
 }
 
 func (r *SongRep) UpdateSong(id string, s *model.Song) (*model.Song, error) {
+	r.logger.Debugf("SongRep UpdateSong")
+
 	q := `UPDATE songs
-		SET
-			song_name = COALESCE($2, song_name),
-			group_name = COALESCE($3, group_name)
-		WHERE id = $1
-		RETURNING id, song_name, group_name`
+	SET
+	song_name = COALESCE($2, song_name),
+	group_name = COALESCE($3, group_name)
+	WHERE id = $1
+	RETURNING id, song_name, group_name`
 
 	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", q))
 
@@ -57,7 +83,7 @@ func (r *SongRep) UpdateSong(id string, s *model.Song) (*model.Song, error) {
 		id,
 		s.Name,
 		s.Group,
-	).Scan(&song.ID, &song.Name, &song.Group); err != nil {
+	).Scan(&song.SongID, &song.Name, &song.Group); err != nil {
 		r.logger.Errorf("Ошибка SQL: %s", err)
 		return nil, err
 	}
@@ -65,7 +91,9 @@ func (r *SongRep) UpdateSong(id string, s *model.Song) (*model.Song, error) {
 	return song, nil
 }
 
-func (r *SongRep) GetSongs(f *storage.Filter) ([]*model.Song, bool, error) {
+func (r *SongRep) GetSongs(f *model.Filter) ([]*model.Song, bool, error) {
+	r.logger.Debugf("SongRep GetSongs")
+
 	var hasNextPage bool = false
 
 	songs, err := r.FilterSongs(*f)

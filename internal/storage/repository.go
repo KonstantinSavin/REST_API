@@ -5,8 +5,8 @@ import (
 )
 
 type SongRep interface {
-	CreateSong(s *model.Song) error
+	CreateSong(s *model.EnrichedSong) (*model.EnrichedSong, error)
 	DeleteSong(id string) error
 	UpdateSong(id string, s *model.Song) (*model.Song, error)
-	GetSongs(f *Filter) ([]*model.Song, bool, error)
+	GetSongs(f *model.Filter) ([]*model.Song, bool, error)
 }

@@ -3,7 +3,6 @@ package sqldb
 import (
 	"database/sql"
 	"effective-mobile/music-lib/internal/storage"
-	"effective-mobile/music-lib/pkg/logging"
 
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -15,9 +14,10 @@ type Storage struct {
 	logger  *logrus.Logger
 }
 
-func New(db *sql.DB) *Storage {
+func New(db *sql.DB, logger *logrus.Logger) *Storage {
 	return &Storage{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
@@ -28,7 +28,7 @@ func (st *Storage) Song() storage.SongRep {
 
 	st.songRep = &SongRep{
 		storage: st,
-		logger:  logging.GetLogger(),
+		logger:  st.logger,
 	}
 
 	return st.songRep

@@ -3,7 +3,6 @@ package apiserver
 import (
 	_ "effective-mobile/music-lib/docs"
 	"effective-mobile/music-lib/internal/model"
-	"effective-mobile/music-lib/internal/storage"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -23,19 +22,21 @@ import (
 // @Success      200          {object}  model.Song
 // @Router       /add [post]
 func (srv *server) handlerAddSong(c *gin.Context) {
+	srv.logger.Debug("Handler AddSong")
+
 	song := model.Song{}
 	if err := c.ShouldBindJSON(&song); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := srv.storage.Song().CreateSong(&song)
+	enrichedSong, err := srv.service.AddSong(song)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"result": "song was added", "song": song})
+	c.JSON(http.StatusCreated, gin.H{"result": "song was added", "song": enrichedSong})
 }
 
 // DeleteSong godoc
@@ -50,9 +51,11 @@ func (srv *server) handlerAddSong(c *gin.Context) {
 // @Success      204  {object}  model.Song
 // @Router       /delete/{id} [delete]
 func (srv *server) handlerDeleteSong(c *gin.Context) {
+	srv.logger.Debug("Handler DeleteSong")
+
 	songID := c.Param("id")
 
-	err := srv.storage.Song().DeleteSong(songID)
+	err := srv.service.DeleteSong(songID)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
@@ -74,6 +77,8 @@ func (srv *server) handlerDeleteSong(c *gin.Context) {
 // @Success      200          {object}  model.Song
 // @Router       /update/{id} [patch]
 func (srv *server) handlerUpdateSong(c *gin.Context) {
+	srv.logger.Debug("Handler UpdateSong")
+
 	songID := c.Param("id")
 
 	var newSong model.Song
@@ -82,7 +87,7 @@ func (srv *server) handlerUpdateSong(c *gin.Context) {
 		return
 	}
 
-	song, err := srv.storage.Song().UpdateSong(songID, &newSong)
+	song, err := srv.service.UpdateSong(songID, &newSong)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
@@ -103,14 +108,16 @@ func (srv *server) handlerUpdateSong(c *gin.Context) {
 // @Success      200          {array}         storage.Filter
 // @Router       /songs [post]
 func (srv *server) handlerGetSongs(c *gin.Context) {
-	input := storage.Filter{}
+	srv.logger.Debug("Handler GetSongs")
+
+	input := model.Filter{}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	filter := input.Update()
-	songs, hasNextPagge, err := srv.storage.Song().GetSongs(&filter)
+	songs, hasNextPagge, err := srv.service.GetSongs(&filter)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
@@ -123,6 +130,6 @@ func (srv *server) handlerGetSongs(c *gin.Context) {
 
 	c.JSON(
 		http.StatusOK,
-		storage.FilteredSongs{Songs: songs},
+		model.FilteredSongs{Songs: songs},
 	)
 }

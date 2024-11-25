@@ -4,12 +4,13 @@ type Filter struct {
 	Page    *int    `json:"page"`
 	PerPage *int    `json:"per_page"`
 	ID      *string `json:"id"`
-	Name    *string `json:"song"`
-	Group   *string `json:"group"`
+	Name    *string `json:"song_name"`
+	Group   *string `json:"group_name"`
+	GroupID *int    `json:"group_id"`
 }
 
 type FilteredSongs struct {
-	Songs []*Song `json:"songs"`
+	Songs []*EnrichedSong `json:"songs"`
 }
 
 func (f Filter) Update() Filter {

@@ -65,33 +65,58 @@ func (r *SongRep) DeleteSong(id string) error {
 	return nil
 }
 
-func (r *SongRep) UpdateSong(id string, s *model.Song) (*model.Song, error) {
+func (r *SongRep) UpdateSong(id string, s *model.EnrichedSong) (*model.EnrichedSong, error) {
 	r.logger.Debugf("SongRep UpdateSong")
 
-	q := `UPDATE songs
-	SET
-	song_name = COALESCE($2, song_name),
-	group_name = COALESCE($3, group_name)
-	WHERE id = $1
-	RETURNING id, song_name, group_name`
+	qg := `WITH inserted AS (
+    	INSERT INTO group_names (group_name) VALUES ($1) 
+    	ON CONFLICT (group_name) DO NOTHING
+    	RETURNING id
+		)
+		SELECT id FROM inserted
+		UNION ALL
+		SELECT id FROM group_names WHERE group_name = $1 LIMIT 1;`
 
-	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", q))
+	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", qg))
 
-	song := &model.Song{}
 	if err := r.storage.db.QueryRow(
-		q,
+		qg,
+		s.Group,
+	).Scan(&s.GroupID); err != nil {
+		r.logger.Errorf("Ошибка SQL: %s", err)
+		return s, err
+	}
+
+	qs := `UPDATE songs 
+	SET 
+    	song_name = COALESCE($2, song_name), 
+    	group_id = COALESCE($3, group_id), 
+    	release_date = COALESCE($4, release_date), 
+    	text = COALESCE($5, text), 
+    	link = COALESCE($6, link) 
+	WHERE id = $1 
+	RETURNING id, song_name, group_id, release_date, text, link;`
+
+	r.logger.Debugf(fmt.Sprintf("SQL Query: %s", qs))
+
+	newSong := &model.EnrichedSong{}
+	if err := r.storage.db.QueryRow(
+		qs,
 		id,
 		s.Name,
-		s.Group,
-	).Scan(&song.SongID, &song.Name, &song.Group); err != nil {
+		s.GroupID,
+		s.ReleaseDate,
+		s.Text,
+		s.Link,
+	).Scan(&newSong.SongID, &newSong.Name, &newSong.GroupID, &newSong.ReleaseDate, &newSong.Text, &newSong.Link); err != nil {
 		r.logger.Errorf("Ошибка SQL: %s", err)
 		return nil, err
 	}
 
-	return song, nil
+	return newSong, nil
 }
 
-func (r *SongRep) GetSongs(f *model.Filter) ([]*model.Song, bool, error) {
+func (r *SongRep) GetSongs(f *model.Filter) ([]*model.EnrichedSong, bool, error) {
 	r.logger.Debugf("SongRep GetSongs")
 
 	var hasNextPage bool = false

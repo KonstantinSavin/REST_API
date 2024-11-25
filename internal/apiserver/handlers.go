@@ -81,7 +81,7 @@ func (srv *server) handlerUpdateSong(c *gin.Context) {
 
 	songID := c.Param("id")
 
-	var newSong model.Song
+	var newSong model.EnrichedSong
 	if err := c.ShouldBindJSON(&newSong); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

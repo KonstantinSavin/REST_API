@@ -11,7 +11,7 @@ Content-Type: application/json
 DELETE http://localhost:8000/delete/4
 
 ### Update song
-PATCH http://localhost:8000/update/5
+PATCH http://localhost:8000/update/3
 Content-Type: application/json
 
 {
@@ -19,14 +19,22 @@ Content-Type: application/json
  "song": "Toxicity"
 }
 
-### Get songs by filter
+### Get songs by filter song_name
 POST http://localhost:8000/songs
 Content-Type: application/json
 
 {
     "page": 1,
     "per_page": 8,
-    "group": "Muse"
+    "song_name": "Supermassive Black Hole"
 }
 
-###
+### Get songs by filter group_name
+POST http://localhost:8000/songs
+Content-Type: application/json
+
+{
+    "page": 1,
+    "per_page": 8,
+    "group_name": "SOAD"
+}

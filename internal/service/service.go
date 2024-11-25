@@ -13,11 +13,11 @@ type Service struct {
 	logger  *logrus.Logger
 }
 
-func NewService(storage storage.Storage, apiUrl string, log *logrus.Logger) *Service {
+func NewService(storage storage.Storage, apiUrl string, logger *logrus.Logger) *Service {
 	return &Service{
 		storage: storage,
 		apiUrl:  apiUrl,
-		logger:  log,
+		logger:  logger,
 	}
 }
 
@@ -46,12 +46,12 @@ func (s *Service) DeleteSong(id string) error {
 	return s.storage.Song().DeleteSong(id)
 }
 
-func (s *Service) UpdateSong(id string, newSong *model.Song) (*model.Song, error) {
+func (s *Service) UpdateSong(id string, newSong *model.EnrichedSong) (*model.EnrichedSong, error) {
 	s.logger.Debug("Service UpdateSong")
 	return s.storage.Song().UpdateSong(id, newSong)
 }
 
-func (s *Service) GetSongs(f *model.Filter) ([]*model.Song, bool, error) {
+func (s *Service) GetSongs(f *model.Filter) ([]*model.EnrichedSong, bool, error) {
 	s.logger.Debug("Service GetSongs")
 	return s.storage.Song().GetSongs(f)
 }

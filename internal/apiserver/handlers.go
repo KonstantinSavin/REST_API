@@ -73,8 +73,8 @@ func (srv *server) handlerDeleteSong(c *gin.Context) {
 // @Accept       appcication/json
 // @Produce      appcication/json
 // @Param        id           path                  string    true  "song id"
-// @Param        input  body            model.Song  true    "delete song"
-// @Success      200          {object}  model.Song
+// @Param        input  body            model.EnrichedSong  true    "delete song"
+// @Success      200          {object}  model.EnrichedSongSong
 // @Router       /update/{id} [patch]
 func (srv *server) handlerUpdateSong(c *gin.Context) {
 	srv.logger.Debug("Handler UpdateSong")
@@ -104,8 +104,8 @@ func (srv *server) handlerUpdateSong(c *gin.Context) {
 // @ID           get-songs
 // @Accept       appcication/json
 // @Produce      appcication/json
-// @Param        input  body  storage.Filter  true  "filter"
-// @Success      200          {array}         storage.Filter
+// @Param        input  body  model.Filter  true  "filter"
+// @Success      200          {array}         model.Filter
 // @Router       /songs [post]
 func (srv *server) handlerGetSongs(c *gin.Context) {
 	srv.logger.Debug("Handler GetSongs")
@@ -134,6 +134,17 @@ func (srv *server) handlerGetSongs(c *gin.Context) {
 	)
 }
 
+// GetCouplets godoc
+//
+// @Summary      GetCouplets
+// @Description  get song text with pagination by couplets
+// @Tags         songs
+// @ID           get-couplets
+// @Accept       appcication/json
+// @Produce      appcication/json
+// @Param        input  body  model.Filter  true  "filter"
+// @Success      200          {array}         storage.Filter
+// @Router       /songtext/:id [post]
 func (srv *server) handlerGetCouplets(c *gin.Context) {
 	srv.logger.Debug("Handler GetCouplets")
 

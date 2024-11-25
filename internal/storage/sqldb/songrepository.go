@@ -133,3 +133,21 @@ func (r *SongRep) GetSongs(f *model.Filter) ([]*model.EnrichedSong, bool, error)
 
 	return songs, hasNextPage, nil
 }
+
+func (r *SongRep) GetCouplets(stp *model.SongTextPagination) (*model.PaginatedText, bool, error) {
+	r.logger.Debugf("SongRep GetCouplets")
+
+	var hasNextPage bool = false
+
+	couplets, err := r.FilterCouplets(*stp)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if len(couplets.Сouplets) > *stp.PerPage {
+		couplets.Сouplets = couplets.Сouplets[:len(couplets.Сouplets)-1]
+		hasNextPage = true
+	}
+
+	return couplets, hasNextPage, nil
+}

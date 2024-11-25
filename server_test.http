@@ -38,3 +38,13 @@ Content-Type: application/json
     "per_page": 8,
     "group_name": "SOAD"
 }
+
+### Get paginated song text by id
+POST http://localhost:8000/songtext/1
+Content-Type: application/json
+
+{
+    "page": 1,
+    "per_page": 8,
+    "id": 1
+}

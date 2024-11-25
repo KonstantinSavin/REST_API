@@ -9,4 +9,5 @@ type SongRep interface {
 	DeleteSong(id string) error
 	UpdateSong(id string, s *model.EnrichedSong) (*model.EnrichedSong, error)
 	GetSongs(f *model.Filter) ([]*model.EnrichedSong, bool, error)
+	GetCouplets(f *model.SongTextPagination) (*model.PaginatedText, bool, error)
 }

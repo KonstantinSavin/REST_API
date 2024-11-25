@@ -17,12 +17,12 @@ type serv interface {
 	DeleteSong(id string) error
 	UpdateSong(id string, s *model.EnrichedSong) (*model.EnrichedSong, error)
 	GetSongs(f *model.Filter) ([]*model.EnrichedSong, bool, error)
+	GetCouplets(filter *model.SongTextPagination) (*model.PaginatedText, bool, error)
 }
 
 type server struct {
-	router *gin.Engine
-	logger *logrus.Logger
-	// storage *storage.Storage
+	router  *gin.Engine
+	logger  *logrus.Logger
 	service serv
 }
 
@@ -49,4 +49,5 @@ func (srv *server) configureRouter() {
 	srv.router.DELETE("/delete/:id", srv.handlerDeleteSong)
 	srv.router.PATCH("/update/:id", srv.handlerUpdateSong)
 	srv.router.POST("/songs", srv.handlerGetSongs)
+	srv.router.POST("/songtext/:id", srv.handlerGetCouplets)
 }

@@ -55,3 +55,8 @@ func (s *Service) GetSongs(f *model.Filter) ([]*model.EnrichedSong, bool, error)
 	s.logger.Debug("Service GetSongs")
 	return s.storage.Song().GetSongs(f)
 }
+
+func (s *Service) GetCouplets(stp *model.SongTextPagination) (*model.PaginatedText, bool, error) {
+	s.logger.Debug("Service GetCouplets")
+	return s.storage.Song().GetCouplets(stp)
+}

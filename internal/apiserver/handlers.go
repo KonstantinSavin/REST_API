@@ -133,3 +133,30 @@ func (srv *server) handlerGetSongs(c *gin.Context) {
 		model.FilteredSongs{Songs: songs},
 	)
 }
+
+func (srv *server) handlerGetCouplets(c *gin.Context) {
+	srv.logger.Debug("Handler GetCouplets")
+
+	input := model.SongTextPagination{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	stp := input.Update()
+
+	paginatedText, hasNextPage, err := srv.service.GetCouplets(&stp)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Writer.Header().Set("Pagination-Page", strconv.Itoa(*stp.Page))
+	c.Writer.Header().Set("Pagination-Limit", strconv.Itoa(*stp.PerPage))
+	c.Writer.Header().Set("Has-Next-Page", strconv.FormatBool(hasNextPage))
+
+	c.JSON(
+		http.StatusOK,
+		model.PaginatedText{Сouplets: paginatedText.Сouplets},
+	)
+}

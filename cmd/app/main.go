@@ -16,7 +16,7 @@ import (
 // @description  API server for music library
 // @host         localhost:8000
 // @BasePath     /
-// @schemes      http https
+// @schemes      http
 
 func main() {
 	logger := logging.GetLogger()
@@ -28,8 +28,8 @@ func main() {
 	}
 
 	cfg := config.GetConfig()
-	logger.Infof("конфиг получен: port: %s, DB_url: %s",
-		cfg.Port, cfg.DBURL)
+	logger.Infof("конфиг получен: port: %s, DB_url: %s, API_URL: %s",
+		cfg.Port, cfg.DBURL, cfg.APIURL)
 
 	logger.Debug("запускаем сервер")
 	if err := apiserver.Start(cfg, logger); err != nil {

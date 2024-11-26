@@ -12,14 +12,16 @@ import (
 
 // AddSong godoc
 //
-// @Summary      AddSong
-// @Description  add new song to library
+// @Summary      Add a new song to the library
+// @Description  This endpoint allows to add a new song to the library.
 // @Tags         songs
 // @ID           add-song
-// @Accept       appcication/json
-// @Produce      appcication/json
-// @Param        input  body            model.Song  true  "add song"
-// @Success      200          {object}  model.Song
+// @Accept       application/json
+// @Produce      application/json
+// @Param        input  body            model.Song  true  "Song object to be added"
+// @Success      201          {object}  model.EnrichedSong  "Successfully created song"
+// @Failure      400          {object}  string  "Invalid input"
+// @Failure      422          {object}  string  "Unprocessable entity"
 // @Router       /add [post]
 func (srv *server) handlerAddSong(c *gin.Context) {
 	srv.logger.Debug("Handler AddSong")
@@ -41,14 +43,15 @@ func (srv *server) handlerAddSong(c *gin.Context) {
 
 // DeleteSong godoc
 //
-// @Summary      DeleteSong
-// @Description  delete song from library
+// @Summary      Delete a song from the library
+// @Description  This endpoint allows the user to delete a song by its ID from the library.
 // @Tags         songs
 // @ID           delete-song
-// @Accept       appcication/json
-// @Produce      appcication/json
-// @Param        id   path   string     true  "song id"
-// @Success      204  {object}  model.Song
+// @Accept       application/json
+// @Produce      application/json
+// @Param        id   path   string     true  "ID of the song to be deleted"
+// @Success      204   "Successfully deleted song"
+// @Failure      422   {object}  string  "Unprocessable entity"
 // @Router       /delete/{id} [delete]
 func (srv *server) handlerDeleteSong(c *gin.Context) {
 	srv.logger.Debug("Handler DeleteSong")
@@ -66,15 +69,17 @@ func (srv *server) handlerDeleteSong(c *gin.Context) {
 
 // UpdateSong godoc
 //
-// @Summary      UpdateSong
-// @Description  update song from library
+// @Summary      Update a song in the library
+// @Description  This endpoint allows the user to update an existing song by its ID in the library.
 // @Tags         songs
 // @ID           update-song
-// @Accept       appcication/json
-// @Produce      appcication/json
-// @Param        id           path                  string    true  "song id"
-// @Param        input  body            model.EnrichedSong  true    "delete song"
-// @Success      200          {object}  model.EnrichedSongSong
+// @Accept       application/json
+// @Produce      application/json
+// @Param        id    path   string              true  "ID of the song to be updated"
+// @Param        input body    model.EnrichedSong  true  "New song data"
+// @Success      200   {object}  model.EnrichedSong
+// @Failure      400   {object}  string  "Invalid input"
+// @Failure      422   {object}  string  "Unprocessable entity"
 // @Router       /update/{id} [patch]
 func (srv *server) handlerUpdateSong(c *gin.Context) {
 	srv.logger.Debug("Handler UpdateSong")
@@ -98,14 +103,17 @@ func (srv *server) handlerUpdateSong(c *gin.Context) {
 
 // GetSongs godoc
 //
-// @Summary      GetSongs
-// @Description  get songs with filtration and pagination
+// @Summary      Retrieves a list of songs with filtering and pagination
+// @Description  This endpoint allows the user to retrieve a filtered list of songs with pagination information.
 // @Tags         songs
 // @ID           get-songs
-// @Accept       appcication/json
-// @Produce      appcication/json
-// @Param        input  body  model.Filter  true  "filter"
-// @Success      200          {array}         model.Filter
+// @Accept       application/json
+// @Produce      application/json
+// @Param        input body model.Filter true "Filtering parameters for songs"
+// @Success      200   {array}   model.EnrichedSong "A list of enriched songs"
+// @Failure      400   {object}  string      "Bad request"
+// @Failure      404   {object}  string      "Songs not found"
+// @Failure      422   {object}  string      "Unprocessable entity"
 // @Router       /songs [post]
 func (srv *server) handlerGetSongs(c *gin.Context) {
 	srv.logger.Debug("Handler GetSongs")
@@ -123,6 +131,11 @@ func (srv *server) handlerGetSongs(c *gin.Context) {
 		return
 	}
 
+	if len(songs) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Songs not found"})
+		return
+	}
+
 	c.Writer.Header().Set("Pagination-Page", strconv.Itoa(*filter.Page))
 	c.Writer.Header().Set("Pagination-Limit", strconv.Itoa(*filter.PerPage))
 
@@ -136,15 +149,18 @@ func (srv *server) handlerGetSongs(c *gin.Context) {
 
 // GetCouplets godoc
 //
-// @Summary      GetCouplets
-// @Description  get song text with pagination by couplets
+// @Summary      Get the song text with pagination by couplets
+// @Description  This endpoint retrieves the text of a song, broken down into couplets, with support for pagination.
 // @Tags         songs
 // @ID           get-couplets
-// @Accept       appcication/json
-// @Produce      appcication/json
-// @Param        input  body  model.Filter  true  "filter"
-// @Success      200          {array}         storage.Filter
-// @Router       /songtext/:id [post]
+// @Accept       application/json
+// @Produce      application/json
+// @Param        input  body  model.SongTextPagination  true  "Filters and pagination parameters"
+// @Success      200          {object}         model.PaginatedText "Returns paginated couplets of the song"
+// @Failure      400          {object}         string      "Bad request"
+// @Failure      404          {object}         string      "Song not found"
+// @Failure      422          {object}         string      "Unprocessable entity"
+// @Router       /songtext/{id} [post]
 func (srv *server) handlerGetCouplets(c *gin.Context) {
 	srv.logger.Debug("Handler GetCouplets")
 
@@ -159,6 +175,11 @@ func (srv *server) handlerGetCouplets(c *gin.Context) {
 	paginatedText, hasNextPage, err := srv.service.GetCouplets(&stp)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	if len(paginatedText.Сouplets) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Song not found"})
 		return
 	}
 

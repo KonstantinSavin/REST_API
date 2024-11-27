@@ -18,21 +18,21 @@ const docTemplate = `{
     "paths": {
         "/add": {
             "post": {
-                "description": "add new song to library",
+                "description": "This endpoint allows to add a new song to the library.",
                 "consumes": [
-                    "appcication/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "appcication/json"
+                    "application/json"
                 ],
                 "tags": [
                     "songs"
                 ],
-                "summary": "AddSong",
+                "summary": "Add a new song to the library",
                 "operationId": "add-song",
                 "parameters": [
                     {
-                        "description": "add song",
+                        "description": "Song object to be added",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -42,10 +42,22 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Successfully created song",
                         "schema": {
-                            "$ref": "#/definitions/model.Song"
+                            "$ref": "#/definitions/model.EnrichedSong"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -53,22 +65,22 @@ const docTemplate = `{
         },
         "/delete/{id}": {
             "delete": {
-                "description": "delete song from library",
+                "description": "This endpoint allows the user to delete a song by its ID from the library.",
                 "consumes": [
-                    "appcication/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "appcication/json"
+                    "application/json"
                 ],
                 "tags": [
                     "songs"
                 ],
-                "summary": "DeleteSong",
+                "summary": "Delete a song from the library",
                 "operationId": "delete-song",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "song id",
+                        "description": "ID of the song to be deleted",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -76,9 +88,12 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content",
+                        "description": "Successfully deleted song"
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
                         "schema": {
-                            "$ref": "#/definitions/model.Song"
+                            "type": "string"
                         }
                     }
                 }
@@ -86,37 +101,108 @@ const docTemplate = `{
         },
         "/songs": {
             "post": {
-                "description": "get songs with filtration and pagination",
+                "description": "This endpoint allows the user to retrieve a filtered list of songs with pagination information.",
                 "consumes": [
-                    "appcication/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "appcication/json"
+                    "application/json"
                 ],
                 "tags": [
                     "songs"
                 ],
-                "summary": "GetSongs",
+                "summary": "Retrieves a list of songs with filtering and pagination",
                 "operationId": "get-songs",
                 "parameters": [
                     {
-                        "description": "filter",
+                        "description": "Filtering parameters for songs",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/storage.Filter"
+                            "$ref": "#/definitions/model.Filter"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "A list of enriched songs",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/storage.Filter"
+                                "$ref": "#/definitions/model.EnrichedSong"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Songs not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/songtext/{id}": {
+            "post": {
+                "description": "This endpoint retrieves the text of a song, broken down into couplets, with support for pagination.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Get the song text with pagination by couplets",
+                "operationId": "get-couplets",
+                "parameters": [
+                    {
+                        "description": "Filters and pagination parameters",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SongTextPagination"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns paginated couplets of the song",
+                        "schema": {
+                            "$ref": "#/definitions/model.PaginatedText"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Song not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -124,33 +210,33 @@ const docTemplate = `{
         },
         "/update/{id}": {
             "patch": {
-                "description": "update song from library",
+                "description": "This endpoint allows the user to update an existing song by its ID in the library.",
                 "consumes": [
-                    "appcication/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "appcication/json"
+                    "application/json"
                 ],
                 "tags": [
                     "songs"
                 ],
-                "summary": "UpdateSong",
+                "summary": "Update a song in the library",
                 "operationId": "update-song",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "song id",
+                        "description": "ID of the song to be updated",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "delete song",
+                        "description": "New song data",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Song"
+                            "$ref": "#/definitions/model.EnrichedSong"
                         }
                     }
                 ],
@@ -158,7 +244,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Song"
+                            "$ref": "#/definitions/model.EnrichedSong"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable entity",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -166,24 +264,39 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.Song": {
+        "model.EnrichedSong": {
             "type": "object",
             "properties": {
                 "group": {
                     "type": "string"
                 },
+                "groupID": {
+                    "type": "integer"
+                },
                 "id": {
+                    "type": "integer"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "releaseDate": {
                     "type": "string"
                 },
                 "song": {
                     "type": "string"
+                },
+                "text": {
+                    "type": "string"
                 }
             }
         },
-        "storage.Filter": {
+        "model.Filter": {
             "type": "object",
             "properties": {
-                "group": {
+                "group_id": {
+                    "type": "integer"
+                },
+                "group_name": {
                     "type": "string"
                 },
                 "id": {
@@ -195,7 +308,52 @@ const docTemplate = `{
                 "per_page": {
                     "type": "integer"
                 },
+                "song_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PaginatedText": {
+            "type": "object",
+            "properties": {
+                "couplets": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.Song": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
                 "song": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SongTextPagination": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginated_text": {
+                    "$ref": "#/definitions/model.PaginatedText"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "text": {
                     "type": "string"
                 }
             }
@@ -208,7 +366,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8000",
 	BasePath:         "/",
-	Schemes:          []string{"http", "https"},
+	Schemes:          []string{"http"},
 	Title:            "Music library",
 	Description:      "API server for music library",
 	InfoInstanceName: "swagger",

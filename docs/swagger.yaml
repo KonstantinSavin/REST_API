@@ -1,17 +1,27 @@
 basePath: /
 definitions:
-  model.Song:
+  model.EnrichedSong:
     properties:
       group:
         type: string
+      groupID:
+        type: integer
       id:
+        type: integer
+      link:
+        type: string
+      releaseDate:
         type: string
       song:
         type: string
+      text:
+        type: string
     type: object
-  storage.Filter:
+  model.Filter:
     properties:
-      group:
+      group_id:
+        type: integer
+      group_name:
         type: string
       id:
         type: string
@@ -19,7 +29,36 @@ definitions:
         type: integer
       per_page:
         type: integer
+      song_name:
+        type: string
+    type: object
+  model.PaginatedText:
+    properties:
+      couplets:
+        items:
+          type: string
+        type: array
+    type: object
+  model.Song:
+    properties:
+      group:
+        type: string
+      id:
+        type: integer
       song:
+        type: string
+    type: object
+  model.SongTextPagination:
+    properties:
+      id:
+        type: integer
+      page:
+        type: integer
+      paginated_text:
+        $ref: '#/definitions/model.PaginatedText'
+      per_page:
+        type: integer
+      text:
         type: string
     type: object
 host: localhost:8000
@@ -32,102 +71,170 @@ paths:
   /add:
     post:
       consumes:
-      - appcication/json
-      description: add new song to library
+      - application/json
+      description: This endpoint allows to add a new song to the library.
       operationId: add-song
       parameters:
-      - description: add song
+      - description: Song object to be added
         in: body
         name: input
         required: true
         schema:
           $ref: '#/definitions/model.Song'
       produces:
-      - appcication/json
+      - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Successfully created song
           schema:
-            $ref: '#/definitions/model.Song'
-      summary: AddSong
+            $ref: '#/definitions/model.EnrichedSong'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "422":
+          description: Unprocessable entity
+          schema:
+            type: string
+      summary: Add a new song to the library
       tags:
       - songs
   /delete/{id}:
     delete:
       consumes:
-      - appcication/json
-      description: delete song from library
+      - application/json
+      description: This endpoint allows the user to delete a song by its ID from the
+        library.
       operationId: delete-song
       parameters:
-      - description: song id
+      - description: ID of the song to be deleted
         in: path
         name: id
         required: true
         type: string
       produces:
-      - appcication/json
+      - application/json
       responses:
         "204":
-          description: No Content
+          description: Successfully deleted song
+        "422":
+          description: Unprocessable entity
           schema:
-            $ref: '#/definitions/model.Song'
-      summary: DeleteSong
+            type: string
+      summary: Delete a song from the library
       tags:
       - songs
   /songs:
     post:
       consumes:
-      - appcication/json
-      description: get songs with filtration and pagination
+      - application/json
+      description: This endpoint allows the user to retrieve a filtered list of songs
+        with pagination information.
       operationId: get-songs
       parameters:
-      - description: filter
+      - description: Filtering parameters for songs
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/storage.Filter'
+          $ref: '#/definitions/model.Filter'
       produces:
-      - appcication/json
+      - application/json
       responses:
         "200":
-          description: OK
+          description: A list of enriched songs
           schema:
             items:
-              $ref: '#/definitions/storage.Filter'
+              $ref: '#/definitions/model.EnrichedSong'
             type: array
-      summary: GetSongs
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Songs not found
+          schema:
+            type: string
+        "422":
+          description: Unprocessable entity
+          schema:
+            type: string
+      summary: Retrieves a list of songs with filtering and pagination
+      tags:
+      - songs
+  /songtext/{id}:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint retrieves the text of a song, broken down into couplets,
+        with support for pagination.
+      operationId: get-couplets
+      parameters:
+      - description: Filters and pagination parameters
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.SongTextPagination'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns paginated couplets of the song
+          schema:
+            $ref: '#/definitions/model.PaginatedText'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Song not found
+          schema:
+            type: string
+        "422":
+          description: Unprocessable entity
+          schema:
+            type: string
+      summary: Get the song text with pagination by couplets
       tags:
       - songs
   /update/{id}:
     patch:
       consumes:
-      - appcication/json
-      description: update song from library
+      - application/json
+      description: This endpoint allows the user to update an existing song by its
+        ID in the library.
       operationId: update-song
       parameters:
-      - description: song id
+      - description: ID of the song to be updated
         in: path
         name: id
         required: true
         type: string
-      - description: delete song
+      - description: New song data
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/model.Song'
+          $ref: '#/definitions/model.EnrichedSong'
       produces:
-      - appcication/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Song'
-      summary: UpdateSong
+            $ref: '#/definitions/model.EnrichedSong'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "422":
+          description: Unprocessable entity
+          schema:
+            type: string
+      summary: Update a song in the library
       tags:
       - songs
 schemes:
 - http
-- https
 swagger: "2.0"

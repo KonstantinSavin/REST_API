@@ -2,6 +2,7 @@
 - [Использованные библиотеки](#libs)
 - [Конфигурация](#config)
 - [Функциональность](#func)
+- [Интеграция с API](#API)
 - [Установка](#management)
 - [Тестирование](#test)
 - [Сваггер](#swagger)
@@ -14,12 +15,13 @@
 - Работа с HTTP: [gin-gonic/gin](https://github.com/gin-gonic/gin)
 - Тестирование: [stretchr/testify](https://github.com/stretchr/testify)
 - Сваггер: [swaggo/swag](https://github.com/swaggo/swag)
+- Работа с БД Postgres: (database/sql)
 
 # Конфигурация <a name="config"/>
 
 Конфигурация вынесена в файл .env
 
-# Функциональность <a name="func">
+# Функциональность <a name="func"/>
 
 - Получение данных библиотеки с фильтрацией по всем полям и пагинацией
 
@@ -36,12 +38,12 @@ Content-Type: application/json
 - Удаление песни
 
 Пример запроса:  
-DELETE http://localhost:8000/delete/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6
+DELETE http://localhost:8000/delete/1
 
 - Изменение данных песни
 
 Пример запроса:  
-PATCH http://localhost:8000/update/bfaa3ad1-2a8c-4c58-a7d6-4f3f913c37e6  
+PATCH http://localhost:8000/update/2
 Content-Type: application/json
 
 {  
@@ -60,6 +62,23 @@ Content-Type: application/json
 "group": "Muse",  
 "song": "Supermassive Black Hole"  
 }
+
+- Получение текста песни с пагинацией по куплетам
+
+Пример запроса:
+POST http://localhost:8000/songtext/1
+Content-Type: application/json
+
+{
+    "page": 1,
+    "per_page": 8,
+    "id": 1
+}
+
+# Интеграция с внешним API <a name="API"/>
+
+При добавлении песни делается запрос к внешнему API по адресу http://localhost:8088/info
+для обогащения информации о песне.
 
 # Установка <a name="management"/>
 

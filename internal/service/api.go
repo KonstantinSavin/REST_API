@@ -15,7 +15,7 @@ type SongDetail struct {
 }
 
 func (s *Service) fetchInfoFromAPI(group, song string) (SongDetail, error) {
-	s.logger.Debugf("Запрос на информацию по песне %s группы %s в API", song, group)
+	s.logger.Debugf("Запрос на информацию по песне %s группы %s в API: %s", song, group, s.apiUrl)
 
 	params := url.Values{}
 	params.Add("group", group)

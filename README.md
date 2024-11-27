@@ -15,7 +15,7 @@
 - Работа с HTTP: [gin-gonic/gin](https://github.com/gin-gonic/gin)
 - Тестирование: [stretchr/testify](https://github.com/stretchr/testify)
 - Сваггер: [swaggo/swag](https://github.com/swaggo/swag)
-- Работа с БД Postgres: (database/sql)
+- Работа с БД Postgres: database/sql
 
 # Конфигурация <a name="config"/>
 

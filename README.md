@@ -89,7 +89,7 @@ Content-Type: application/json
   
 # Тестирование <a name="test"/>
 
-Для удобства в корневой каталог помещен файл server_test.http для тестирования сервиса (например с помощью расширения [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client))
+Для удобства в каталог internal/apiserver/ помещен файл server_test.http для тестирования сервиса (например с помощью расширения [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client))
 
 # Сваггер <a name="swagger"/>
 [Swagger](docs/swagger.json)
